@@ -1,10 +1,3 @@
-/**
-* Template Name: Personal
-* Updated: Mar 10 2023 with Bootstrap v5.2.3
-* Template URL: https://bootstrapmade.com/personal-free-resume-bootstrap-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
 (function() {
   "use strict";
 
@@ -55,7 +48,7 @@
   })
 
   /**
-   * Scrool with ofset on links with a class name .scrollto
+   * Scroll with offset on links with a class name .scrollto
    */
   on('click', '#navbar .nav-link', function(e) {
     let section = select(this.hash)
@@ -185,7 +178,7 @@
   });
 
   /**
-   * Porfolio isotope and filter
+   * Portfolio isotope and filter
    */
   window.addEventListener('load', () => {
     let portfolioContainer = select('.portfolio-container');
@@ -250,4 +243,27 @@
    */
   new PureCounter();
 
-})()
+  /**
+   * Initialize EmailJS and handle form submission
+   */
+  emailjs.init('RE0ozIRbTC6Ez25pi'); // Initialize EmailJS with your Public Key
+
+  document.getElementById('contact-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    var templateParams = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      subject: document.getElementById('subject').value,
+      message: document.getElementById('message').value
+    };
+
+    emailjs.send('service_3lc19fj', 'template_r97cf4i', templateParams)
+      .then(function(response) {
+        document.getElementById('form-status').innerHTML = 'Message Sent Successfully!';
+      }, function(error) {
+        document.getElementById('form-status').innerHTML = 'Message Failed to Send!';
+      });
+  });
+
+})();
