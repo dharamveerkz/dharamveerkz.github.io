@@ -312,52 +312,64 @@
 </section>
 
     <!-- ======= Contact Section ======= -->
+<!-- ======= Contact Section ======= -->
 <section id="contact" class="contact">
   <div class="container">
     <div class="section-title text-center">
       <h2>Contact</h2>
-      <p>Contact Me</p>
+      <p>Get In Touch</p>
     </div>
 
     <div class="row mt-2">
       <div class="col-md-6 d-flex align-items-stretch">
         <div class="info-box p-4 border rounded shadow-sm">
           <i class="bx bx-map"></i>
-          <h3>My Address</h3>
-          <p>Kiul, Bihar, INDIA</p>
+          <h3>Location</h3>
+          <p>Kiul, Bihar, India</p>
         </div>
       </div>
       <div class="col-md-6 mt-4 mt-md-0 d-flex align-items-stretch">
         <div class="info-box p-4 border rounded shadow-sm">
           <i class="bx bx-share-alt"></i>
-          <h3>Social Profiles</h3>
-          <div class="social-links">
-            <a href="https://twitter.com/dharamveerkz" class="twitter me-2"><i class="bi bi-twitter"></i></a>
-            <a href="https://www.facebook.com/dharamveerkz" class="facebook me-2"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/dharamveerkz/" class="instagram me-2"><i class="bi bi-instagram"></i></a>
-            <a href="https://www.linkedin.com/in/dharamveerkz/" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <h3>Connect With Me</h3>
+          <div class="social-links d-flex flex-wrap">
+            <a href="https://www.linkedin.com/in/dharamveerkr/" class="me-2 mb-2" target="_blank" aria-label="LinkedIn profile"><i class="bi bi-linkedin"></i></a>
+            <a href="mailto:dharamveerkumar774@gmail.com" class="me-2 mb-2" aria-label="Send email"><i class="bi bi-envelope"></i></a>
+            <a href="https://www.instagram.com/imdharamvrr/" class="me-2 mb-2" target="_blank" aria-label="Instagram profile"><i class="bi bi-instagram"></i></a>
+            <a href="https://wa.me/917903797952" class="me-2 mb-2" target="_blank" aria-label="Chat on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            <a href="https://x.com/imdharamvrr" class="me-2 mb-2" target="_blank" aria-label="X/Twitter profile"><i class="bi bi-twitter-x"></i></a>
+            <a href="https://www.facebook.com/imdharamvrr" class="me-2 mb-2" target="_blank" aria-label="Facebook profile"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.youtube.com/@Nomadvir" class="me-2 mb-2" target="_blank" aria-label="YouTube channel"><i class="bi bi-youtube"></i></a>
           </div>
         </div>
       </div>
       <div class="col-md-6 mt-4 d-flex align-items-stretch">
         <div class="info-box p-4 border rounded shadow-sm">
           <i class="bx bx-envelope"></i>
-          <h3>Email Me</h3>
+          <h3>Email</h3>
           <p>dharamveerkumar774@gmail.com</p>
         </div>
       </div>
       <div class="col-md-6 mt-4 d-flex align-items-stretch">
         <div class="info-box p-4 border rounded shadow-sm">
           <i class="bx bx-phone-call"></i>
-          <h3>Call Me</h3>
+          <h3>Phone</h3>
           <p>+91 7903797952</p>
         </div>
       </div>
     </div>
 
-    <!-- Contact Form -->
-    <form name="contact" method="POST" data-netlify="true" class="mt-4 p-4 border rounded shadow-sm">
-      <input type="hidden" name="form-name" value="contact" />
+    <!-- Contact Form (FormSubmit.co) -->
+    <form 
+      action="https://formsubmit.co/dharamveerkumar774@gmail.com"       method="POST" 
+      class="mt-4 p-4 border rounded shadow-sm"
+      id="contactForm"
+    >
+      <!-- Anti-spam & Configuration -->
+      <input type="hidden" name="_subject" value="New Portfolio Message from Dharamveer!">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_autoresponse" value="Thanks for reaching out! I'll get back to you within 24 hours. — Dharamveer">
+      <input type="text" name="_honey" style="display:none" aria-hidden="true">
 
       <div class="row">
         <div class="col-md-6 form-group mb-3">
@@ -371,15 +383,59 @@
         <input type="text" name="subject" class="form-control" placeholder="Subject" required>
       </div>
       <div class="form-group mb-3">
-        <textarea name="message" class="form-control" rows="5" placeholder="Message" required></textarea>
+        <textarea name="message" class="form-control" rows="5" placeholder="How can I help you?" required></textarea>
       </div>
       <div class="text-center">
-        <button type="submit" class="btn btn-primary">Send Message</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Send Message</button>
+      </div>
+      
+      <!-- Success Message (Hidden by Default) -->
+      <div id="successMessage" class="alert alert-success mt-3 d-none text-center" role="alert">
+        ✅ Thank you! Your message has been sent. I'll get back to you soon.
       </div>
     </form>
 
   </div>
 </section>
+<!-- End Contact Section -->
+
+<!-- Form Submission Script -->
+<script>
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById('submitBtn');
+    const success = document.getElementById('successMessage');
+    
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    
+    try {      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      
+      if (response.ok) {
+        form.reset();
+        form.classList.add('d-none');
+        success.classList.remove('d-none');
+        
+        // Reset after 5 seconds
+        setTimeout(() => {
+          form.classList.remove('d-none');
+          success.classList.add('d-none');
+          btn.disabled = false;
+          btn.textContent = 'Send Message';
+        }, 5000);
+      }
+    } catch (err) {
+      alert('Oops! Please try emailing me directly at dharamveerkumar774@gmail.com');
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+    }
+  });
+</script>
 <!-- End Contact Section -->
 
 <!-- Bootstrap Icons -->
