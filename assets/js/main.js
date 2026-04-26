@@ -18,7 +18,6 @@
    */
   const on = (type, el, listener, all = false) => {
     let selectEl = select(el, all)
-
     if (selectEl) {
       if (all) {
         selectEl.forEach(e => e.addEventListener(type, listener))
@@ -48,22 +47,17 @@
   })
 
   /**
-   * Scroll with offset on links with a class name .scrollto
-   */
+   * Smooth scroll navigation with hash links   */
   on('click', '#navbar .nav-link', function(e) {
     let section = select(this.hash)
     if (section) {
       e.preventDefault()
-
       let navbar = select('#navbar')
       let header = select('#header')
       let sections = select('section', true)
       let navlinks = select('#navbar .nav-link', true)
 
-      navlinks.forEach((item) => {
-        item.classList.remove('active')
-      })
-
+      navlinks.forEach((item) => item.classList.remove('active'))
       this.classList.add('active')
 
       if (navbar.classList.contains('navbar-mobile')) {
@@ -75,67 +69,72 @@
 
       if (this.hash == '#header') {
         header.classList.remove('header-top')
-        sections.forEach((item) => {
-          item.classList.remove('section-show')
-        })
+        sections.forEach((item) => item.classList.remove('section-show'))
         return;
       }
 
       if (!header.classList.contains('header-top')) {
         header.classList.add('header-top')
         setTimeout(function() {
-          sections.forEach((item) => {
-            item.classList.remove('section-show')
-          })
+          sections.forEach((item) => item.classList.remove('section-show'))
           section.classList.add('section-show')
-
         }, 350);
       } else {
-        sections.forEach((item) => {
-          item.classList.remove('section-show')
-        })
+        sections.forEach((item) => item.classList.remove('section-show'))
         section.classList.add('section-show')
       }
-
       scrollto(this.hash)
     }
   }, true)
 
   /**
-   * Activate/show sections on load with hash links
+   * Activate sections on load with hash links
    */
   window.addEventListener('load', () => {
     if (window.location.hash) {
       let initial_nav = select(window.location.hash)
-
       if (initial_nav) {
         let header = select('#header')
         let navlinks = select('#navbar .nav-link', true)
-
-        header.classList.add('header-top')
-
-        navlinks.forEach((item) => {
-          if (item.getAttribute('href') == window.location.hash) {
-            item.classList.add('active')
-          } else {
-            item.classList.remove('active')
-          }
+        header.classList.add('header-top')        navlinks.forEach((item) => {
+          item.classList.toggle('active', item.getAttribute('href') == window.location.hash)
         })
-
-        setTimeout(function() {
-          initial_nav.classList.add('section-show')
-        }, 350);
-
+        setTimeout(() => initial_nav.classList.add('section-show'), 350);
         scrollto(window.location.hash)
       }
     }
   });
 
   /**
-   * Skills animation
+   * Initiate Pure Counter (for animated stats)
    */
+  if (typeof PureCounter !== 'undefined') {
+    new PureCounter();
+  }
+
+  /* 
+   * ❌ REMOVED: EmailJS form handling
+   * Reason: Using FormSubmit.co for contact form (static-friendly, no backend)
+   * 
+   * If you switch back to EmailJS later, restore this block:
+   * 
+   * emailjs.init('YOUR_PUBLIC_KEY');
+   * document.getElementById('contact-form').addEventListener('submit', function(event) {
+   *   event.preventDefault();
+   *   var templateParams = { ... };
+   *   emailjs.send('service_id', 'template_id', templateParams)...
+   * });
+   */
+
+  /*
+   * ❌ COMMENTED OUT: Features not currently used
+   * Uncomment only if you add these sections to your portfolio
+   */
+
+  /*
+  // Skills animation with Waypoints
   let skilsContent = select('.skills-content');
-  if (skilsContent) {
+  if (skilsContent && typeof Waypoint !== 'undefined') {
     new Waypoint({
       element: skilsContent,
       offset: '80%',
@@ -146,124 +145,56 @@
         });
       }
     })
-  }
+  }  */
 
-  /**
-   * Testimonials slider
-   */
-  new Swiper('.testimonials-slider', {
-    speed: 600,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    slidesPerView: 'auto',
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    },
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-        spaceBetween: 20
-      },
-
-      1200: {
-        slidesPerView: 3,
-        spaceBetween: 20
+  /*
+  // Testimonials slider (Swiper)
+  if (typeof Swiper !== 'undefined' && document.querySelector('.testimonials-slider')) {
+    new Swiper('.testimonials-slider', {
+      speed: 600, loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      slidesPerView: 'auto',
+      pagination: { el: '.swiper-pagination', type: 'bullets', clickable: true },
+      breakpoints: {
+        320: { slidesPerView: 1, spaceBetween: 20 },
+        1200: { slidesPerView: 3, spaceBetween: 20 }
       }
-    }
-  });
+    });
+  }
+  */
 
-  /**
-   * Portfolio isotope and filter
-   */
+  /*
+  // Portfolio isotope filter + lightbox
   window.addEventListener('load', () => {
     let portfolioContainer = select('.portfolio-container');
-    if (portfolioContainer) {
+    if (portfolioContainer && typeof Isotope !== 'undefined') {
       let portfolioIsotope = new Isotope(portfolioContainer, {
-        itemSelector: '.portfolio-item',
-        layoutMode: 'fitRows'
+        itemSelector: '.portfolio-item', layoutMode: 'fitRows'
       });
-
       let portfolioFilters = select('#portfolio-flters li', true);
-
       on('click', '#portfolio-flters li', function(e) {
         e.preventDefault();
-        portfolioFilters.forEach(function(el) {
-          el.classList.remove('filter-active');
-        });
+        portfolioFilters.forEach(el => el.classList.remove('filter-active'));
         this.classList.add('filter-active');
-
-        portfolioIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
+        portfolioIsotope.arrange({ filter: this.getAttribute('data-filter') });
       }, true);
     }
-
-  });
-
-  /**
-   * Initiate portfolio lightbox 
-   */
-  const portfolioLightbox = GLightbox({
-    selector: '.portfolio-lightbox'
-  });
-
-  /**
-   * Initiate portfolio details lightbox 
-   */
-  const portfolioDetailsLightbox = GLightbox({
-    selector: '.portfolio-details-lightbox',
-    width: '90%',
-    height: '90vh'
-  });
-
-  /**
-   * Portfolio details slider
-   */
-  new Swiper('.portfolio-details-slider', {
-    speed: 400,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
+    // Lightbox init
+    if (typeof GLightbox !== 'undefined') {
+      GLightbox({ selector: '.portfolio-lightbox' });
+      GLightbox({ selector: '.portfolio-details-lightbox', width: '90%', height: '90vh' });
     }
   });
+  */
 
-  /**
-   * Initiate Pure Counter 
-   */
-  new PureCounter();
-
-  /**
-   * Initialize EmailJS and handle form submission
-   */
-  emailjs.init('RE0ozIRbTC6Ez25pi'); // Initialize EmailJS with your Public Key
-
-  document.getElementById('contact-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-
-    var templateParams = {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      subject: document.getElementById('subject').value,
-      message: document.getElementById('message').value
-    };
-
-    emailjs.send('service_3lc19fj', 'template_r97cf4i', templateParams)
-      .then(function(response) {
-        document.getElementById('form-status').innerHTML = 'Message Sent Successfully!';
-      }, function(error) {
-        document.getElementById('form-status').innerHTML = 'Message Failed to Send!';
-      });
-  });
+  /*
+  // Portfolio details slider (Swiper)
+  if (typeof Swiper !== 'undefined' && document.querySelector('.portfolio-details-slider')) {
+    new Swiper('.portfolio-details-slider', {
+      speed: 400, loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', type: 'bullets', clickable: true }
+    });  }
+  */
 
 })();
