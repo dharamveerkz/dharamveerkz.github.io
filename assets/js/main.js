@@ -1,242 +1,271 @@
-/**
- * Personal Portfolio - Main JavaScript
- * Clean, minimal, and mobile-ready
- */
+assets/js/main.js
 
-(function () {
+(function() {
   "use strict";
 
-  // ==============================
-  // Helpers
-  // ==============================
-
+  /**
+   * Easy selector helper function
+   */
   const select = (el, all = false) => {
-    el = el.trim();
-    return all ? [...document.querySelectorAll(el)] : document.querySelector(el);
-  };
-
-  const on = (type, el, listener, all = false) => {
-    const selected = select(el, all);
-    if (!selected) return;
-
+    el = el.trim()
     if (all) {
-      selected.forEach((e) => e.addEventListener(type, listener));
+      return [...document.querySelectorAll(el)]
     } else {
-      selected.addEventListener(type, listener);
+      return document.querySelector(el)
     }
-  };
-
-  const scrollTo = (el) => {
-    const element = typeof el === "string" ? select(el) : el;
-    if (!element) return;
-
-    const headerOffset = 80;
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: "smooth",
-    });
-  };
-
-  // ==============================
-  // Mobile Navigation
-  // ==============================
-
-  const mobileToggle = select(".mobile-nav-toggle");
-  const navbar = select("#navbar");
-  const body = document.body;
-
-  if (mobileToggle && navbar) {
-    // Toggle menu
-    mobileToggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      navbar.classList.toggle("active");
-      body.classList.toggle("mobile-nav-active");
-      mobileToggle.classList.toggle("bi-list");
-      mobileToggle.classList.toggle("bi-x");
-    });
-
-    // Close menu on nav link click
-    on(
-      "click",
-      "#navbar .nav-link",
-      function () {
-        if (body.classList.contains("mobile-nav-active")) {
-          navbar.classList.remove("active");
-          body.classList.remove("mobile-nav-active");
-          mobileToggle.classList.add("bi-list");
-          mobileToggle.classList.remove("bi-x");
-        }
-      },
-      true
-    );
-
-    // Close menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        body.classList.contains("mobile-nav-active") &&
-        !e.target.closest("#navbar") &&
-        !e.target.closest(".mobile-nav-toggle")
-      ) {
-        navbar.classList.remove("active");
-        body.classList.remove("mobile-nav-active");
-        mobileToggle.classList.add("bi-list");
-        mobileToggle.classList.remove("bi-x");
-      }
-    });
   }
 
-  // ==============================
-  // Smooth Scroll Navigation
-  // ==============================
+  /**
+   * Easy event listener function
+   */
+  const on = (type, el, listener, all = false) => {
+    let selectEl = select(el, all)
 
-  on(
-    "click",
-    "#navbar .nav-link",
-    function (e) {
-      const hash = this.getAttribute("href");
-
-      if (hash && hash.startsWith("#")) {
-        e.preventDefault();
-        const target = select(hash);
-
-        if (target) {
-          // Active state update
-          select("#navbar .nav-link", true).forEach((link) =>
-            link.classList.remove("active")
-          );
-          this.classList.add("active");
-
-          // Show section
-          if (hash !== "#header") {
-            select("section", true).forEach((section) =>
-              section.classList.remove("section-show")
-            );
-            target.classList.add("section-show");
-
-            const header = select("#header");
-            if (header && !header.classList.contains("header-top")) {
-              header.classList.add("header-top");
-            }
-          }
-
-          scrollTo(target);
-        }
+    if (selectEl) {
+      if (all) {
+        selectEl.forEach(e => e.addEventListener(type, listener))
+      } else {
+        selectEl.addEventListener(type, listener)
       }
-    },
-    true
-  );
+    }
+  }
 
-  // ==============================
-  // Load with Hash
-  // ==============================
+  /**
+   * Scrolls to an element with header offset
+   */
+  const scrollto = (el) => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
 
-  window.addEventListener("load", () => {
-    const hash = window.location.hash;
+  /**
+   * Mobile nav toggle
+   */
+  on('click', '.mobile-nav-toggle', function(e) {
+    select('#navbar').classList.toggle('navbar-mobile')
+    this.classList.toggle('bi-list')
+    this.classList.toggle('bi-x')
+  })
 
-    if (hash) {
-      const target = select(hash);
+  /**
+   * Scroll with offset on links with a class name .scrollto
+   */
+  on('click', '#navbar .nav-link', function(e) {
+    let section = select(this.hash)
+    if (section) {
+      e.preventDefault()
 
-      if (target) {
-        select("#navbar .nav-link", true).forEach((link) => {
-          link.classList.toggle(
-            "active",
-            link.getAttribute("href") === hash
-          );
-        });
+      let navbar = select('#navbar')
+      let header = select('#header')
+      let sections = select('section', true)
+      let navlinks = select('#navbar .nav-link', true)
 
-        setTimeout(() => {
-          select("section", true).forEach((section) =>
-            section.classList.remove("section-show")
-          );
-          target.classList.add("section-show");
-        }, 100);
+      navlinks.forEach((item) => {
+        item.classList.remove('active')
+      })
 
-        const header = select("#header");
-        if (header && hash !== "#header") {
-          header.classList.add("header-top");
-        }
+      this.classList.add('active')
+
+      if (navbar.classList.contains('navbar-mobile')) {
+        navbar.classList.remove('navbar-mobile')
+        let navbarToggle = select('.mobile-nav-toggle')
+        navbarToggle.classList.toggle('bi-list')
+        navbarToggle.classList.toggle('bi-x')
+      }
+
+      if (this.hash == '#header') {
+        header.classList.remove('header-top')
+        sections.forEach((item) => {
+          item.classList.remove('section-show')
+        })
+        return;
+      }
+
+      if (!header.classList.contains('header-top')) {
+        header.classList.add('header-top')
+        setTimeout(function() {
+          sections.forEach((item) => {
+            item.classList.remove('section-show')
+          })
+          section.classList.add('section-show')
+
+        }, 350);
+      } else {
+        sections.forEach((item) => {
+          item.classList.remove('section-show')
+        })
+        section.classList.add('section-show')
+      }
+
+      scrollto(this.hash)
+    }
+  }, true)
+
+  /**
+   * Activate/show sections on load with hash links
+   */
+  window.addEventListener('load', () => {
+    if (window.location.hash) {
+      let initial_nav = select(window.location.hash)
+
+      if (initial_nav) {
+        let header = select('#header')
+        let navlinks = select('#navbar .nav-link', true)
+
+        header.classList.add('header-top')
+
+        navlinks.forEach((item) => {
+          if (item.getAttribute('href') == window.location.hash) {
+            item.classList.add('active')
+          } else {
+            item.classList.remove('active')
+          }
+        })
+
+        setTimeout(function() {
+          initial_nav.classList.add('section-show')
+        }, 350);
+
+        scrollto(window.location.hash)
       }
     }
   });
 
-  // ==============================
-  // Back to Top
-  // ==============================
-
-  const backToTop = select(".back-to-top");
-
-  if (backToTop) {
-    const toggle = () => {
-      if (window.pageYOffset > 300) {
-        backToTop.classList.add("active");
-      } else {
-        backToTop.classList.remove("active");
+  /**
+   * Skills animation
+   */
+  let skilsContent = select('.skills-content');
+  if (skilsContent) {
+    new Waypoint({
+      element: skilsContent,
+      offset: '80%',
+      handler: function(direction) {
+        let progress = select('.progress .progress-bar', true);
+        progress.forEach((el) => {
+          el.style.width = el.getAttribute('aria-valuenow') + '%'
+        });
       }
+    })
+  }
+
+  /**
+   * Testimonials slider
+   */
+  new Swiper('.testimonials-slider', {
+    speed: 600,
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false
+    },
+    slidesPerView: 'auto',
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true
+    },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+        spaceBetween: 20
+      },
+
+      1200: {
+        slidesPerView: 3,
+        spaceBetween: 20
+      }
+    }
+  });
+
+  /**
+   * Portfolio isotope and filter
+   */
+  window.addEventListener('load', () => {
+    let portfolioContainer = select('.portfolio-container');
+    if (portfolioContainer) {
+      let portfolioIsotope = new Isotope(portfolioContainer, {
+        itemSelector: '.portfolio-item',
+        layoutMode: 'fitRows'
+      });
+
+      let portfolioFilters = select('#portfolio-flters li', true);
+
+      on('click', '#portfolio-flters li', function(e) {
+        e.preventDefault();
+        portfolioFilters.forEach(function(el) {
+          el.classList.remove('filter-active');
+        });
+        this.classList.add('filter-active');
+
+        portfolioIsotope.arrange({
+          filter: this.getAttribute('data-filter')
+        });
+      }, true);
+    }
+
+  });
+
+  /**
+   * Initiate portfolio lightbox 
+   */
+  const portfolioLightbox = GLightbox({
+    selector: '.portfolio-lightbox'
+  });
+
+  /**
+   * Initiate portfolio details lightbox 
+   */
+  const portfolioDetailsLightbox = GLightbox({
+    selector: '.portfolio-details-lightbox',
+    width: '90%',
+    height: '90vh'
+  });
+
+  /**
+   * Portfolio details slider
+   */
+  new Swiper('.portfolio-details-slider', {
+    speed: 400,
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true
+    }
+  });
+
+  /**
+   * Initiate Pure Counter 
+   */
+  new PureCounter();
+
+  /**
+   * Initialize EmailJS and handle form submission
+   */
+  emailjs.init('RE0ozIRbTC6Ez25pi'); // Initialize EmailJS with your Public Key
+
+  document.getElementById('contact-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    var templateParams = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      subject: document.getElementById('subject').value,
+      message: document.getElementById('message').value
     };
 
-    window.addEventListener("scroll", toggle);
+    emailjs.send('service_3lc19fj', 'template_r97cf4i', templateParams)
+      .then(function(response) {
+        document.getElementById('form-status').innerHTML = 'Message Sent Successfully!';
+      }, function(error) {
+        document.getElementById('form-status').innerHTML = 'Message Failed to Send!';
+      });
+  });
 
-    backToTop.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    toggle();
-  }
-
-  // ==============================
-  // Skills Animation
-  // ==============================
-
-  const skillsContent = select(".skills-content");
-
-  if (skillsContent && typeof Waypoint !== "undefined") {
-    new Waypoint({
-      element: skillsContent,
-      offset: "80%",
-      handler: function () {
-        select(".progress .progress-bar", true).forEach((bar) => {
-          const width =
-            bar.getAttribute("aria-valuenow") || bar.dataset.width;
-          if (width) bar.style.width = width + "%";
-        });
-        this.destroy();
-      },
-    });
-  }
-
-  // ==============================
-  // Contact Form
-  // ==============================
-
-  const contactForm = select("#contactForm");
-
-  if (contactForm) {
-    contactForm.addEventListener("submit", () => {
-      const btn = select("#submitBtn");
-      const successMsg = select("#successMessage");
-
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Sending...";
-      }
-
-      setTimeout(() => {
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = "Send Message";
-        }
-
-        if (successMsg) {
-          successMsg.classList.remove("d-none");
-          setTimeout(() => {
-            successMsg.classList.add("d-none");
-          }, 5000);
-        }
-      }, 3000);
-    });
-  }
 })();
