@@ -575,7 +575,7 @@ section .container {
 # Contact
 --------------------------------------------------------------*/
 .contact .info-box {
-  color: #444444;
+  color: #444;
   padding: 20px;
   width: 100%;
   background: rgba(255, 255, 255, 0.08);
@@ -598,7 +598,6 @@ section .container {
 }
 
 .contact .info-box p {
-  padding: 0;
   color: #fff;
   line-height: 24px;
   font-size: 14px;
@@ -612,9 +611,7 @@ section .container {
 
 .contact .info-box .social-links a {
   font-size: 18px;
-  display: inline-block;
   color: #fff;
-  line-height: 1;
   margin-right: 12px;
   transition: 0.3s;
 }
@@ -623,67 +620,56 @@ section .container {
   color: #18d26e;
 }
 
-.contact .php-email-form {
+/* Form Styling (matches your FormSubmit form) */
+#contactForm {
   padding: 30px;
   background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
 }
 
-.contact .php-email-form .error-message {
-  display: none;
+#contactForm input,
+#contactForm textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  color: #fff;
   background: rgba(255, 255, 255, 0.08);
-  background: #ed3c0d;
-  text-align: left;
-  padding: 15px;
-  font-weight: 600;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  transition: 0.3s;
 }
 
-.contact .php-email-form .error-message br+br {
-  margin-top: 25px;
+#contactForm input:focus,
+#contactForm textarea:focus {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.contact .php-email-form .sent-message {
-  display: none;
-  background: rgba(255, 255, 255, 0.08);
+/* Button */
+#contactForm button {
   background: #18d26e;
-  text-align: center;
-  padding: 15px;
-  font-weight: 600;
+  color: #fff;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  transition: 0.3s;
+  cursor: pointer;
 }
 
-.contact .php-email-form .loading {
-  display: none;
-  background: rgba(255, 255, 255, 0.08);
-  text-align: center;
-  padding: 15px;
+#contactForm button:hover {
+  background: #15b95f;
 }
 
-.contact .php-email-form .loading:before {
-  content: "";
-  display: inline-block;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  margin: 0 10px -6px 0;
-  border: 3px solid #18d26e;
-  border-top-color: #eee;
-  animation: animate-loading 1s linear infinite;
+/* Success Message */
+#successMessage {
+  background: #18d26e;
+  color: #fff;
+  padding: 12px;
+  border-radius: 5px;
 }
-
-.contact .php-email-form input,
-.contact .php-email-form textarea {
-  border-radius: 0;
-  box-shadow: none;
   font-size: 14px;
   background: rgba(255, 255, 255, 0.08);
   border: 0;
   transition: 0.3s;
   color: #fff;
 }
-
-.contact .php-email-form input:focus,
-.contact .php-email-form textarea:focus {
-  background-color: rgba(255, 255, 255, 0.11);
-}
-
-.contact .php-email-form input::-moz-placeholder,
-.contact .php
