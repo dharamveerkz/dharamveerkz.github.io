@@ -400,44 +400,6 @@
 </section>
 <!-- End Contact Section -->
 
-<!-- Form Submission Script -->
-<script>
-  document.getElementById('contactForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const btn = document.getElementById('submitBtn');
-    const success = document.getElementById('successMessage');
-
-    btn.disabled = true;
-    btn.textContent = 'Sending...';
-
-    try {
-      await fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form)
-      });
-
-      // Assume success if no error
-      form.reset();
-      form.classList.add('d-none');
-      success.classList.remove('d-none');
-
-      setTimeout(() => {
-        form.classList.remove('d-none');
-        success.classList.add('d-none');
-        btn.disabled = false;
-        btn.textContent = 'Send Message';
-      }, 5000);
-
-    } catch (err) {
-      alert('Oops! Please try emailing me directly at dharamveerkumar774@gmail.com');
-      btn.disabled = false;
-      btn.textContent = 'Send Message';
-    }
-  });
-</script>
-<!-- End Contact Section -->
-
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
