@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
       p.classList.remove("active");
     });
 
-    // Show target page
-    const target = document.getElementById("page-" + pageId);
+    // Show target page (UPDATED: IDs are now #home, #about, etc. - NO "page-" prefix)
+    const target = document.getElementById(pageId);
     if (target) {
       target.classList.add("active");
 
@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
-
   // Logo click
   const logoLink = document.querySelector(".logo a");
   if (logoLink) {
@@ -71,8 +70,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // ===== MOBILE TOGGLE =====
   if (toggle && navbar) {
     toggle.addEventListener("click", function () {
-      navbar.classList.toggle("navbar-mobile");
-      navbar.classList.toggle("active");
+      // Toggle the floating panel class on the navbar-mobile element
+      const mobilePanel = document.querySelector(".navbar-mobile");
+      if (mobilePanel) {
+        mobilePanel.classList.toggle("active");
+      }
       if (overlay) overlay.classList.toggle("active");
       this.classList.toggle("bi-list");
       this.classList.toggle("bi-x");
@@ -81,9 +83,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ===== CLOSE MENU =====
   function closeMenu() {
-    if (navbar) {
-      navbar.classList.remove("navbar-mobile");
-      navbar.classList.remove("active");
+    const mobilePanel = document.querySelector(".navbar-mobile");
+    if (mobilePanel) {
+      mobilePanel.classList.remove("active");
     }
     if (overlay) overlay.classList.remove("active");
     if (toggle) {
@@ -94,8 +96,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (overlay) overlay.addEventListener("click", closeMenu);
 
+  // Close menu when a nav link is clicked (mobile)  links.forEach(link => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth <= 991) {
+        closeMenu();
+      }
+    });
+  });
+
   // ===== HEADER SCROLL TINT =====
-  // Since pages scroll inside #main (not window), we watch the active page's scrollable div
   function bindScrollTint() {
     const activePage = document.querySelector(".page.active");
     if (!activePage) return;
@@ -136,8 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const setStatus = (status) => {
       if (status === "sending") {
-        btn.disabled    = true;
-        btn.textContent = "Sending...";
+        btn.disabled    = true;        btn.textContent = "Sending...";
       }
       if (status === "success") {
         form.reset();
@@ -162,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const response = await fetch(form.action, {
           method: "POST",
           body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
         });
         if (response.ok) {
           setStatus("success");
@@ -174,5 +183,36 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  // ===== KEYBOARD NAVIGATION (Accessibility) =====
+  document.addEventListener("keydown", function (e) {
+    // Close menu on Escape key
+    if (e.key === "Escape") {
+      closeMenu();
+    }
+    
+    // Allow arrow key navigation in mobile menu
+    const mobilePanel = document.querySelector(".navbar-mobile.active");
+    if (mobilePanel && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();      const menuLinks = mobilePanel.querySelectorAll("a");
+      const currentIndex = Array.from(menuLinks).indexOf(document.activeElement);
+      let nextIndex = e.key === "ArrowDown" 
+        ? (currentIndex + 1) % menuLinks.length 
+        : (currentIndex - 1 + menuLinks.length) % menuLinks.length;
+      menuLinks[nextIndex].focus();
+    }
+  });
+
+  // ===== RESIZE HANDLER =====
+  let resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      // Close mobile menu when switching to desktop
+      if (window.innerWidth > 991) {
+        closeMenu();
+      }
+    }, 250);
+  });
 
 });
