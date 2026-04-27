@@ -39,65 +39,44 @@
     });
   };
 
-  // Mobile Navigation Toggle
-  const mobileToggle = select('.mobile-nav-toggle');
-  const navbar = select('#navbar ul');
-  const body = document.body;
+  // Mobile Navigation Toggle - CRITICAL FIX
+const mobileToggle = document.querySelector('.mobile-nav-toggle');
+const navbar = document.querySelector('#navbar ul');
+const body = document.body;
 
-  if (mobileToggle && navbar) {
-    mobileToggle.addEventListener('click', () => {
-      navbar.classList.toggle('active');
-      body.classList.toggle('mobile-nav-active');
-      mobileToggle.classList.toggle('bi-list');
-      mobileToggle.classList.toggle('bi-x');
-    });
+if (mobileToggle && navbar) {
+  mobileToggle.addEventListener('click', (e) => {
+    e.stopPropagation(); // ← Prevents event bubbling
+    navbar.classList.toggle('active');
+    body.classList.toggle('mobile-nav-active');
+    mobileToggle.classList.toggle('bi-list');
+    mobileToggle.classList.toggle('bi-x');
+  });
 
-    // Close menu when clicking a nav link
-    on('click', '#navbar .nav-link', function(e) {
+  // Close when clicking a link
+  document.querySelectorAll('#navbar .nav-link').forEach(link => {
+    link.addEventListener('click', () => {
       if (body.classList.contains('mobile-nav-active')) {
         navbar.classList.remove('active');
         body.classList.remove('mobile-nav-active');
         mobileToggle.classList.add('bi-list');
         mobileToggle.classList.remove('bi-x');
       }
-    }, true);
-  }
+    });
+  });
+}
 
-  // Smooth Scroll for Navigation Links
-  on('click', '#navbar .nav-link', function(e) {
-    const hash = this.getAttribute('href');
-    
-    // Only handle internal anchor links
-    if (hash && hash.startsWith('#')) {
-      e.preventDefault();
-      const target = select(hash);
-      
-      if (target) {
-        // Update active state
-        select('#navbar .nav-link', true).forEach(link => {
-          link.classList.remove('active');
-        });
-        this.classList.add('active');
-        
-        // Show target section (for single-page template behavior)
-        if (hash !== '#header') {
-          select('section', true).forEach(section => {
-            section.classList.remove('section-show');
-          });
-          target.classList.add('section-show');
-          
-          // Add header-top class for compact header
-          const header = select('#header');
-          if (header && !header.classList.contains('header-top')) {
-            header.classList.add('header-top');
-          }
-        }
-        
-        // Smooth scroll to section
-        scrollTo(target);
-      }
-    }
-  }, true);
+// Close when clicking overlay
+document.addEventListener('click', (e) => {
+  if (body.classList.contains('mobile-nav-active') && 
+      !e.target.closest('#navbar ul') && 
+      !e.target.closest('.mobile-nav-toggle')) {
+    navbar.classList.remove('active');
+    body.classList.remove('mobile-nav-active');
+    mobileToggle.classList.add('bi-list');
+    mobileToggle.classList.remove('bi-x');
+  }
+});
 
   // Handle hash links on page load
   window.addEventListener('load', () => {
