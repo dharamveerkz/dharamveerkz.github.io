@@ -1,5 +1,3 @@
-console.log("JS Loaded");
-
 (function () {
   "use strict";
 
