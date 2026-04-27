@@ -286,16 +286,15 @@ h6 {
 .navbar-mobile {
   position: fixed;
   top: 0;
-  right: -280px; /* hidden */
+  right: -280px;
   width: 280px;
   height: 100vh;
-  background: #111; /* you can adjust */
+  background: #111;
   transition: right 0.3s ease;
   z-index: 1000;
   padding-top: 60px;
 }
 
-/* Active state (visible) */
 .navbar-mobile.active {
   right: 0;
 }
@@ -304,8 +303,11 @@ h6 {
 .navbar-mobile ul {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;   
   padding: 20px;
   gap: 10px;
+  margin: 0;
 }
 
 /* Menu items */
