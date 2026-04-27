@@ -304,6 +304,7 @@ html {
 # Sections
 --------------------------------------------------------------*/
 section {
+  display: none;
   position: absolute;
   width: 100%;
   top: 140px;
@@ -315,6 +316,7 @@ section {
 }
 
 section.section-show {
+  display: block;
   top: 100px;
   opacity: 1;
   visibility: visible;
