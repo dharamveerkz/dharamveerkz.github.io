@@ -1,3 +1,4 @@
+console.log("JS Loaded");
 assets/js/main.js
 
 (function() {
