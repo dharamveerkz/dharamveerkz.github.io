@@ -401,9 +401,9 @@ body {
 
 .navbar-mobile a.active,
 .navbar-mobile .nav-link.active {
-  border-bottom: none
-  text-decoration: none 
-  box-shadow: none 
+  border-bottom: none;
+  text-decoration: none ;
+  box-shadow: none ;
 }
 
 .navbar-mobile a.active::after {
