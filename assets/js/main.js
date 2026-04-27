@@ -1,273 +1,211 @@
-assets/js/main.js
+/**
+ * Personal Portfolio - Main JavaScript
+ * Clean, minimal, and mobile-ready
+ */
 
 (function() {
   "use strict";
 
-  /**
-   * Easy selector helper function
-   */
+  // Helper: Select element(s)
   const select = (el, all = false) => {
-    el = el.trim()
-    if (all) {
-      return [...document.querySelectorAll(el)]
-    } else {
-      return document.querySelector(el)
-    }
-  }
+    el = el.trim();
+    return all ? [...document.querySelectorAll(el)] : document.querySelector(el);
+  };
 
-  /**
-   * Easy event listener function
-   */
+  // Helper: Add event listener
   const on = (type, el, listener, all = false) => {
-    let selectEl = select(el, all)
-
-    if (selectEl) {
-      if (all) {
-        selectEl.forEach(e => e.addEventListener(type, listener))
-      } else {
-        selectEl.addEventListener(type, listener)
-      }
+    const selectEl = select(el, all);
+    if (!selectEl) return;
+    
+    if (all) {
+      selectEl.forEach(e => e.addEventListener(type, listener));
+    } else {
+      selectEl.addEventListener(type, listener);
     }
-  }
+  };
 
-  /**
-   * Scrolls to an element with header offset
-   */
-  const scrollto = (el) => {
+  // Smooth scroll to element
+  const scrollTo = (el) => {
+    const element = typeof el === 'string' ? select(el) : el;
+    if (!element) return;
+    
+    const headerOffset = 80;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
     window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
+      top: offsetPosition,
+      behavior: "smooth"
+    });
+  };
+
+  // Mobile Navigation Toggle
+  const mobileToggle = select('.mobile-nav-toggle');
+  const navbar = select('#navbar ul');
+  const body = document.body;
+
+  if (mobileToggle && navbar) {
+    mobileToggle.addEventListener('click', () => {
+      navbar.classList.toggle('active');
+      body.classList.toggle('mobile-nav-active');
+      mobileToggle.classList.toggle('bi-list');
+      mobileToggle.classList.toggle('bi-x');
+    });
+
+    // Close menu when clicking a nav link
+    on('click', '#navbar .nav-link', function(e) {
+      if (body.classList.contains('mobile-nav-active')) {
+        navbar.classList.remove('active');
+        body.classList.remove('mobile-nav-active');
+        mobileToggle.classList.add('bi-list');
+        mobileToggle.classList.remove('bi-x');
+      }
+    }, true);
   }
 
-  /**
-   * Mobile nav toggle
-   */
-  on('click', '.mobile-nav-toggle', function(e) {
-    select('#navbar').classList.toggle('navbar-mobile')
-    this.classList.toggle('bi-list')
-    this.classList.toggle('bi-x')
-  })
-
-  /**
-   * Scroll with offset on links with a class name .scrollto
-   */
+  // Smooth Scroll for Navigation Links
   on('click', '#navbar .nav-link', function(e) {
-    let section = select(this.hash)
-    if (section) {
-      e.preventDefault()
-
-      let navbar = select('#navbar')
-      let header = select('#header')
-      let sections = select('section', true)
-      let navlinks = select('#navbar .nav-link', true)
-
-      navlinks.forEach((item) => {
-        item.classList.remove('active')
-      })
-
-      this.classList.add('active')
-
-      if (navbar.classList.contains('navbar-mobile')) {
-        navbar.classList.remove('navbar-mobile')
-        let navbarToggle = select('.mobile-nav-toggle')
-        navbarToggle.classList.toggle('bi-list')
-        navbarToggle.classList.toggle('bi-x')
-      }
-
-      if (this.hash == '#header') {
-        header.classList.remove('header-top')
-        sections.forEach((item) => {
-          item.classList.remove('section-show')
-        })
-        return;
-      }
-
-      if (!header.classList.contains('header-top')) {
-        header.classList.add('header-top')
-        setTimeout(function() {
-          sections.forEach((item) => {
-            item.classList.remove('section-show')
-          })
-          section.classList.add('section-show')
-
-        }, 350);
-      } else {
-        sections.forEach((item) => {
-          item.classList.remove('section-show')
-        })
-        section.classList.add('section-show')
-      }
-
-      scrollto(this.hash)
-    }
-  }, true)
-
-  /**
-   * Activate/show sections on load with hash links
-   */
-  window.addEventListener('load', () => {
-    if (window.location.hash) {
-      let initial_nav = select(window.location.hash)
-
-      if (initial_nav) {
-        let header = select('#header')
-        let navlinks = select('#navbar .nav-link', true)
-
-        header.classList.add('header-top')
-
-        navlinks.forEach((item) => {
-          if (item.getAttribute('href') == window.location.hash) {
-            item.classList.add('active')
-          } else {
-            item.classList.remove('active')
+    const hash = this.getAttribute('href');
+    
+    // Only handle internal anchor links
+    if (hash && hash.startsWith('#')) {
+      e.preventDefault();
+      const target = select(hash);
+      
+      if (target) {
+        // Update active state
+        select('#navbar .nav-link', true).forEach(link => {
+          link.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        // Show target section (for single-page template behavior)
+        if (hash !== '#header') {
+          select('section', true).forEach(section => {
+            section.classList.remove('section-show');
+          });
+          target.classList.add('section-show');
+          
+          // Add header-top class for compact header
+          const header = select('#header');
+          if (header && !header.classList.contains('header-top')) {
+            header.classList.add('header-top');
           }
-        })
+        }
+        
+        // Smooth scroll to section
+        scrollTo(target);
+      }
+    }
+  }, true);
 
-        setTimeout(function() {
-          initial_nav.classList.add('section-show')
-        }, 350);
-
-        scrollto(window.location.hash)
+  // Handle hash links on page load
+  window.addEventListener('load', () => {
+    const hash = window.location.hash;
+    if (hash) {
+      const target = select(hash);
+      if (target) {
+        // Set active nav link
+        select('#navbar .nav-link', true).forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === hash);
+        });
+        
+        // Show section after small delay for transition
+        setTimeout(() => {
+          select('section', true).forEach(section => {
+            section.classList.remove('section-show');
+          });
+          target.classList.add('section-show');
+        }, 100);
+        
+        // Compact header
+        const header = select('#header');
+        if (header && hash !== '#header') {
+          header.classList.add('header-top');
+        }
       }
     }
   });
 
-  /**
-   * Skills animation
-   */
-  let skilsContent = select('.skills-content');
-  if (skilsContent) {
-    new Waypoint({
-      element: skilsContent,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = select('.progress .progress-bar', true);
-        progress.forEach((el) => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%'
-        });
+  // Back to Top Button
+  const backToTop = select('.back-to-top');
+  if (backToTop) {
+    const toggleBackToTop = () => {
+      if (window.pageYOffset > 300) {
+        backToTop.classList.add('active');
+      } else {
+        backToTop.classList.remove('active');
       }
-    })
+    };
+    
+    window.addEventListener('scroll', toggleBackToTop);
+    backToTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Initial check
+    toggleBackToTop();
   }
 
-  /**
-   * Testimonials slider
-   */
-  new Swiper('.testimonials-slider', {
-    speed: 600,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    slidesPerView: 'auto',
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    },
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-        spaceBetween: 20
-      },
-
-      1200: {
-        slidesPerView: 3,
-        spaceBetween: 20
+  // Skills Progress Animation (if Waypoints is loaded)
+  const skillsContent = select('.skills-content');
+  if (skillsContent && typeof Waypoint !== 'undefined') {
+    new Waypoint({
+      element: skillsContent,
+      offset: '80%',
+      handler: function() {
+        select('.progress .progress-bar', true).forEach(bar => {
+          const width = bar.getAttribute('aria-valuenow') || bar.dataset.width;
+          if (width) {
+            bar.style.width = width + '%';
+          }
+        });
+        this.destroy(); // Run only once
       }
+    });
+  }
+
+  // Form Submit Handling (for FormSubmit.co)
+  const contactForm = select('#contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', async function(e) {
+      const btn = select('#submitBtn');
+      const successMsg = select('#successMessage');
+      
+      // Let FormSubmit handle submission normally
+      // But add loading state for UX
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+      }
+      
+      // Re-enable button after 3 seconds (FormSubmit redirects or handles)
+      setTimeout(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Send Message';
+        }
+        if (successMsg) {
+          successMsg.classList.remove('d-none');
+          setTimeout(() => {
+            successMsg.classList.add('d-none');
+          }, 5000);
+        }
+      }, 3000);
+    });
+  }
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (body.classList.contains('mobile-nav-active') && 
+        !e.target.closest('#navbar') && 
+        !e.target.closest('.mobile-nav-toggle')) {
+      navbar.classList.remove('active');
+      body.classList.remove('mobile-nav-active');
+      mobileToggle.classList.add('bi-list');
+      mobileToggle.classList.remove('bi-x');
     }
-  });
-
-  /**
-   * Portfolio isotope and filter
-   */
-  window.addEventListener('load', () => {
-    let portfolioContainer = select('.portfolio-container');
-    if (portfolioContainer) {
-      let portfolioIsotope = new Isotope(portfolioContainer, {
-        itemSelector: '.portfolio-item',
-        layoutMode: 'fitRows'
-      });
-
-      let portfolioFilters = select('#portfolio-flters li', true);
-
-      on('click', '#portfolio-flters li', function(e) {
-        e.preventDefault();
-        portfolioFilters.forEach(function(el) {
-          el.classList.remove('filter-active');
-        });
-        this.classList.add('filter-active');
-
-        portfolioIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
-      }, true);
-    }
-
-  });
-
-  /**
-   * Initiate portfolio lightbox 
-   */
-  const portfolioLightbox = GLightbox({
-    selector: '.portfolio-lightbox'
-  });
-
-  /**
-   * Initiate portfolio details lightbox 
-   */
-  const portfolioDetailsLightbox = GLightbox({
-    selector: '.portfolio-details-lightbox',
-    width: '90%',
-    height: '90vh'
-  });
-
-  /**
-   * Portfolio details slider
-   */
-  new Swiper('.portfolio-details-slider', {
-    speed: 400,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    }
-  });
-
-  /**
-   * Initiate Pure Counter 
-   */
-  new PureCounter();
-
-  /**
-   * Initialize EmailJS and handle form submission
-   */
-  emailjs.init('RE0ozIRbTC6Ez25pi'); // Initialize EmailJS with your Public Key
-
-  document.getElementById('contact-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-
-    var templateParams = {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      subject: document.getElementById('subject').value,
-      message: document.getElementById('message').value
-    };
-
-    emailjs.send('service_3lc19fj', 'template_r97cf4i', templateParams)
-      .then(function(response) {
-        document.getElementById('form-status').innerHTML = 'Message Sent Successfully!';
-      }, function(error) {
-        document.getElementById('form-status').innerHTML = 'Message Failed to Send!';
-      });
   });
 
 })();
-
-remove unwanted things 
