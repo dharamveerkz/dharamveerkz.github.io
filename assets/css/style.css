@@ -277,6 +277,10 @@ h6 {
   .navbar ul {
     display: none;
   }
+  .navbar.navbar-mobile ul {
+    display: block;
+  }
+}
 }
 
 .navbar-mobile {
