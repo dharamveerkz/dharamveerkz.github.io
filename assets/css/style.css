@@ -7,9 +7,10 @@
   --dark:        #040404;
   --header-h:    68px;
   --footer-h:    48px;
-  --font-body:   "Open Sans", sans-serif;
-  --font-head:   "Raleway", sans-serif;
-  --font-ui:     "Poppins", sans-serif;
+  /* Simpler, clean font stack — Poppins for headings/UI, system sans for body */
+  --font-body:   "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-head:   "Poppins", "Segoe UI", sans-serif;
+  --font-ui:     "Poppins", "Segoe UI", sans-serif;
 }
 
 /*--------------------------------------------------------------
@@ -228,7 +229,8 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Override for direct children that need full-width treatment */
 .page-content.scrollable {
-  padding: 40px 28px 40px;
+  /* bottom padding = footer height + extra breathing room so last content isn't hidden */
+  padding: 40px 28px calc(var(--footer-h) + 32px);
 }
 
 /*--------------------------------------------------------------
@@ -279,11 +281,11 @@ img { max-width: 100%; height: auto; display: block; }
   /* nothing — content sits directly over the bg image */
 }
 
-/* Subtle glass panel to keep text readable over bg */
+/* Stronger dark+blur overlay for all section pages — text must be clearly readable over bg */
 .page-content.scrollable {
-  background: rgba(4, 4, 4, 0.6);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(4, 4, 4, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /*--------------------------------------------------------------
@@ -819,9 +821,30 @@ img { max-width: 100%; height: auto; display: block; }
 
   .services-grid { grid-template-columns: 1fr; }
 
-  .page-content.scrollable { padding: 24px 16px; }
+  .page-content.scrollable { padding: 20px 16px calc(var(--footer-h) + 28px); }
 
-  .section-title p { font-size: 24px; }
+  .section-title p { font-size: 22px; }
+  .section-title h2 { font-size: 11px; }
+
+  /* Body text larger on mobile */
+  .about-text p,
+  .resume-item p,
+  .resume-item ul li,
+  .icon-box p,
+  .info-box p,
+  #contactForm input,
+  #contactForm textarea { font-size: 15px; }
+
+  .about-text h3 { font-size: 20px; }
+  .info-list li { font-size: 15px; }
+
+  .resume-item h4 { font-size: 14px; }
+  .resume-title { font-size: 18px; }
+
+  .icon-box h4 { font-size: 16px; }
+  .info-box h3 { font-size: 15px; }
+
+  .skills-grid p { font-size: 15px; }
 
   .info-box { padding: 14px 14px 14px 62px; }
 }
@@ -830,4 +853,3 @@ img { max-width: 100%; height: auto; display: block; }
   .home-title { font-size: 26px; }
   .home-subtitle { font-size: 16px; }
 }
-
