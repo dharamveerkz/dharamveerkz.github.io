@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const header = document.querySelector("#header");
   const overlay = document.querySelector(".navbar-overlay");
 
-  // Mobile Toggle (Right Drawer)
+  // ================= MOBILE TOGGLE =================
   if (toggle && navbar) {
     toggle.addEventListener("click", function () {
       navbar.classList.add("navbar-mobile");
@@ -21,17 +21,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Close menu function
+  // Close menu
   const closeMenu = () => {
     if (navbar) navbar.classList.remove("active");
     if (overlay) overlay.classList.remove("active");
+
     if (toggle) {
       toggle.classList.add("bi-list");
       toggle.classList.remove("bi-x");
     }
   };
 
-  // Navigation Click
+  // ================= NAV LINK CLICK =================
   links.forEach(link => {
     link.addEventListener("click", function (e) {
       const targetId = this.getAttribute("href");
@@ -42,27 +43,56 @@ document.addEventListener("DOMContentLoaded", function () {
         const targetSection = document.querySelector(targetId);
         if (!targetSection) return;
 
+        // Smooth scroll
+        targetSection.scrollIntoView({
+          behavior: "smooth"
+        });
+
         // Active link
         links.forEach(l => l.classList.remove("active"));
         this.classList.add("active");
 
-        // Section switch
-        sections.forEach(sec => sec.classList.remove("section-show"));
-        targetSection.classList.add("section-show");
-
-        if (header) header.classList.add("header-top");
-
-        // Close menu
+        // Close mobile menu
         closeMenu();
       }
     });
   });
 
-  // Close on overlay click
+  // ================= OVERLAY CLICK =================
   if (overlay) {
     overlay.addEventListener("click", closeMenu);
   }
 
+  // ================= HEADER SCROLL EFFECT =================
+  window.addEventListener("scroll", function () {
+    if (window.scrollY > 50) {
+      header.classList.add("header-scrolled");
+    } else {
+      header.classList.remove("header-scrolled");
+    }
+  });
+
+  // ================= ACTIVE LINK ON SCROLL (SCROLLSPY) =================
+  window.addEventListener("scroll", function () {
+    let current = "";
+
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      const sectionHeight = section.offsetHeight;
+
+      if (window.scrollY >= sectionTop &&
+          window.scrollY < sectionTop + sectionHeight) {
+        current = section.getAttribute("id");
+      }
+    });
+
+    links.forEach(link => {
+      link.classList.remove("active");
+      if (link.getAttribute("href") === "#" + current) {
+        link.classList.add("active");
+      }
+    });
+  });
 
   // ================= CONTACT FORM =================
   const form = document.getElementById("contactForm");
