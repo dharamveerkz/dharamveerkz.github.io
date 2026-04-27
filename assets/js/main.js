@@ -45,7 +45,7 @@
   // ==============================
 
   const mobileToggle = select(".mobile-nav-toggle");
-  const navbar = select("#navbar ul");
+  const navbar = select("#navbar");
   const body = document.body;
 
   if (mobileToggle && navbar) {
