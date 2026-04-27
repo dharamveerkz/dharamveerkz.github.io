@@ -333,13 +333,22 @@ h6 {
   color: #18d26e;
 }
 
+/* Remove default underlines from active links */
+.navbar-mobile a.active,
+.navbar-mobile .nav-link.active {
+  border-bottom: none !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep only your custom green line */
 .navbar-mobile a.active::after {
   content: '';
   position: absolute;
   bottom: 1px;
-  left: 10px; 
-  width: 5px;
-  height: 1px;
+  left: 10px;
+  width: 30px; /* Adjust width as needed */
+  height: 2px;
   background-color: #18d26e;
 }
 
