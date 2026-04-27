@@ -285,21 +285,21 @@ h6 {
 
 .navbar-mobile {
   position: fixed;
-  top: 50px;           
-  right: -300px;   
-  width: 200px;     
-  height: auto;     
-  background: rgba(17, 17, 17, 0.95); 
-  backdrop-filter: blur(10px);       
-  border-radius: 8px;   
+  top: 50px;
+  right: -300px;
+  width: 200px;
+  height: auto;
+  background: rgba(17, 17, 17, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
   padding: 10px;
   transition: right 0.3s ease;
   z-index: 1000;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .navbar-mobile.active {
-  right: 10px;          
+  right: 10px;
 }
 
 /* Menu list */
@@ -307,23 +307,25 @@ h6 {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: flex-start; 
   margin: 0;
   padding: 0;
-  gap: 5px;     
+  gap: 5px;
   list-style: none;
 }
 
 /* Links */
-.navbar-mobile a {
+.navbar-mobile a,
+.navbar-mobile a:focus {
   color: #fff;
   font-size: 16px;
   text-decoration: none;
-  text-align: left;
+  text-align: left; 
   padding: 6px 10px;
   display: block;
   transition: 0.2s;
   position: relative;
+  width: auto; 
 }
 
 /* Hover Effect */
@@ -335,10 +337,18 @@ h6 {
   content: '';
   position: absolute;
   bottom: 1px;
-  right: 10px;         
+  left: 10px; 
   width: 5px;
   height: 2px;
   background-color: #18d26e;
+}
+
+.navbar-mobile .nav-link.active,
+.navbar-mobile li a.active {
+  margin: 0 !important;
+  padding: 6px 10px 
+  width: auto 
+  text-align: left 
 }
 
 /* ================= OPTIONAL OVERLAY ================= */
