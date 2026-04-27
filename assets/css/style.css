@@ -325,7 +325,7 @@ h6 {
   display: block;
   transition: 0.2s;
   position: relative;
-  width: auto; 
+  width: 100%; 
 }
 
 /* Hover Effect */
@@ -333,21 +333,20 @@ h6 {
   color: #18d26e;
 }
 
-/* Remove default underlines from active links */
+
 .navbar-mobile a.active,
 .navbar-mobile .nav-link.active {
-  border-bottom: none !important;
-  text-decoration: none !important;
-  box-shadow: none !important;
+  border-bottom: none
+  text-decoration: none 
+  box-shadow: none 
 }
 
-/* Keep only your custom green line */
 .navbar-mobile a.active::after {
   content: '';
   position: absolute;
   bottom: 1px;
-  left: 10px;
-  width: 30px; /* Adjust width as needed */
+  left: 0px;
+  width: 10px; 
   height: 2px;
   background-color: #18d26e;
 }
