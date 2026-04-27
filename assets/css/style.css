@@ -343,14 +343,6 @@ h6 {
   background-color: #18d26e;
 }
 
-.navbar-mobile .nav-link.active,
-.navbar-mobile li a.active {
-  margin: 0 !important;
-  padding: 6px 10px 
-  width: auto 
-  text-align: left 
-}
-
 /* ================= OPTIONAL OVERLAY ================= */
 
 .navbar-overlay {
