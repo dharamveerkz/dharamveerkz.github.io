@@ -1,135 +1,136 @@
 console.log("JS Loaded");
-assets/js/main.js
 
-(function() {
+(function () {
   "use strict";
 
-  /**
-   * Easy selector helper function
-   */
+  // ==============================
+  // Helper Functions
+  // ==============================
+
   const select = (el, all = false) => {
-    el = el.trim()
-    if (all) {
-      return [...document.querySelectorAll(el)]
-    } else {
-      return document.querySelector(el)
-    }
-  }
+    el = el.trim();
+    return all
+      ? Array.from(document.querySelectorAll(el))
+      : document.querySelector(el);
+  };
 
-  /**
-   * Easy event listener function
-   */
   const on = (type, el, listener, all = false) => {
-    let selectEl = select(el, all)
+    const elements = select(el, all);
+    if (!elements) return;
 
-    if (selectEl) {
-      if (all) {
-        selectEl.forEach(e => e.addEventListener(type, listener))
-      } else {
-        selectEl.addEventListener(type, listener)
-      }
+    if (all) {
+      elements.forEach(e => e.addEventListener(type, listener));
+    } else {
+      elements.addEventListener(type, listener);
     }
-  }
+  };
 
-  /**
-   * Scrolls to an element with header offset
-   */
-  const scrollto = (el) => {
+  const scrollto = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
-    })
-  }
+      behavior: "smooth",
+    });
+  };
 
-  /**
-   * Mobile nav toggle
-   */
-  on('click', '.mobile-nav-toggle', function(e) {
-    select('#navbar').classList.toggle('navbar-mobile')
-    this.classList.toggle('bi-list')
-    this.classList.toggle('bi-x')
-  })
+  // ==============================
+  // Mobile Nav Toggle
+  // ==============================
 
-  /**
-   * Scroll with offset on links with a class name .scrollto
-   */
-  on('click', '#navbar .nav-link', function(e) {
-    let section = select(this.hash)
-    if (section) {
-      e.preventDefault()
+  window.addEventListener("DOMContentLoaded", () => {
 
-      let navbar = select('#navbar')
-      let header = select('#header')
-      let sections = select('section', true)
-      let navlinks = select('#navbar .nav-link', true)
+    const navbar = select("#navbar");
+    const toggle = select(".mobile-nav-toggle");
 
-      navlinks.forEach((item) => {
-        item.classList.remove('active')
-      })
-
-      this.classList.add('active')
-
-      if (navbar.classList.contains('navbar-mobile')) {
-        navbar.classList.remove('navbar-mobile')
-        let navbarToggle = select('.mobile-nav-toggle')
-        navbarToggle.classList.toggle('bi-list')
-        navbarToggle.classList.toggle('bi-x')
-      }
-
-      if (this.hash == '#header') {
-        header.classList.remove('header-top')
-        sections.forEach((item) => {
-          item.classList.remove('section-show')
-        })
-        return;
-      }
-
-      if (!header.classList.contains('header-top')) {
-        header.classList.add('header-top')
-        setTimeout(function() {
-          sections.forEach((item) => {
-            item.classList.remove('section-show')
-          })
-          section.classList.add('section-show')
-
-        }, 350);
-      } else {
-        sections.forEach((item) => {
-          item.classList.remove('section-show')
-        })
-        section.classList.add('section-show')
-      }
-
-      scrollto(this.hash)
+    if (toggle && navbar) {
+      toggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        navbar.classList.toggle("navbar-mobile");
+        this.classList.toggle("bi-list");
+        this.classList.toggle("bi-x");
+      });
     }
-  }, true)
 
-  /**
-   * Activate/show sections on load with hash links
-   */
-  window.addEventListener('load', () => {
-    if (window.location.hash) {
-      let initial_nav = select(window.location.hash)
+    // ==============================
+    // Navigation Click
+    // ==============================
 
-      if (initial_nav) {
-        let header = select('#header')
-        let navlinks = select('#navbar .nav-link', true)
+    const navLinks = select("#navbar .nav-link", true);
+    const sections = select("section", true);
+    const header = select("#header");
 
-        header.classList.add('header-top')
+    if (navLinks) {
+      navLinks.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          const hash = this.getAttribute("href");
 
-        navlinks.forEach((item) => {
-          if (item.getAttribute('href') == window.location.hash) {
-            item.classList.add('active')
-          } else {
-            item.classList.remove('active')
+          if (!hash || !hash.startsWith("#")) return;
+
+          const section = select(hash);
+          if (!section) return;
+
+          e.preventDefault();
+
+          // Active link
+          navLinks.forEach((item) => item.classList.remove("active"));
+          this.classList.add("active");
+
+          // Close mobile menu
+          if (navbar.classList.contains("navbar-mobile")) {
+            navbar.classList.remove("navbar-mobile");
+            toggle.classList.add("bi-list");
+            toggle.classList.remove("bi-x");
           }
-        })
 
-        setTimeout(function() {
-          initial_nav.classList.add('section-show')
-        }, 350);
+          // Special case: Home
+          if (hash === "#header") {
+            header.classList.remove("header-top");
+            sections.forEach((sec) => sec.classList.remove("section-show"));
+            scrollto();
+            return;
+          }
 
-        scrollto(window.location.hash)
-      }
+          // Show section
+          header.classList.add("header-top");
+
+          sections.forEach((sec) => sec.classList.remove("section-show"));
+          section.classList.add("section-show");
+
+          scrollto();
+        });
+      });
     }
   });
+
+  // ==============================
+  // Load with Hash (#about etc.)
+  // ==============================
+
+  window.addEventListener("load", () => {
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    const target = document.querySelector(hash);
+    if (!target) return;
+
+    const header = document.querySelector("#header");
+    const navLinks = document.querySelectorAll("#navbar .nav-link");
+
+    header?.classList.add("header-top");
+
+    navLinks.forEach((link) => {
+      if (link.getAttribute("href") === hash) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
+
+    setTimeout(() => {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("section-show"));
+      target.classList.add("section-show");
+    }, 200);
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+})();
